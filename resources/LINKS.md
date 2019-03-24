@@ -11,3 +11,4 @@
 [Let's Write a Kernel](https://arjunsreedharan.org/post/82710718100/kernels-101-lets-write-a-kernel)
 
 [ToaruOS](https://github.com/klange/toaruos)
+[TLDP](https://www.tldp.org/LDP/tlk/tlk-toc.html)
