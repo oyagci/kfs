@@ -13,3 +13,5 @@
 [ToaruOS](https://github.com/klange/toaruos)
 
 [TLDP](https://www.tldp.org/LDP/tlk/tlk-toc.html)
+
+[Phil OPP](https://os.phil-opp.com/)
