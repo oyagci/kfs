@@ -5,8 +5,7 @@ LINKER_FILE	:= x86.ld
 SRC_ASM_RAW	:= boot.s
 SRC_ASM		:= $(addprefix src/,$(SRC_ASM_RAW))
 
-SRC_C		:= \
-	kmain.c
+SRC_C		:=
 
 SRC_RS		:= \
 	src/lib.rs
