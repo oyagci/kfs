@@ -1,0 +1,16 @@
+[package]
+name = "kfs"
+version = "0.1.0"
+authors = ["Oguzhan YAGCI <oyagci@student.42.fr>"]
+edition = "2018"
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
