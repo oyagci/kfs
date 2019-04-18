@@ -44,7 +44,7 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.s
 	$(AS) $(ASFLAGS) $< -o $@
 
 $(RUST_LIB): $(SRC_RS)
-		cargo xbuild --target i686-unknown-linux-gnu
+		cargo xbuild --target i686-unknown-linux-gnu.json
 
 %.o: %.rs
 	$(RUSTC)
