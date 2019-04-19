@@ -32,6 +32,8 @@ GRUB_CFG	:= grub.cfg
 
 RUST_LIB	:= target/i686-unknown-linux-gnu/debug/libkfs.a
 
+.PHONE : all, iso, run, clean
+
 all: $(BUILDDIR)/$(KERNEL)
 
 $(BUILDDIR)/$(KERNEL): $(BUILDDIR) $(OBJ_ASM) $(OBJ_C) $(RUST_LIB) $(LINKER_FILE)
@@ -44,10 +46,7 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.s
 	$(AS) $(ASFLAGS) $< -o $@
 
 $(RUST_LIB): $(SRC_RS)
-		cargo xbuild --target i686-unknown-linux-gnu.json
-
-%.o: %.rs
-	$(RUSTC)
+	cargo xbuild --target i686-unknown-linux-gnu.json
 
 iso: $(BUILDDIR)/$(ISO)
 
@@ -60,14 +59,9 @@ $(BUILDDIR)/$(ISO): $(BUILDDIR)/$(KERNEL)
 run: iso
 	qemu-system-i386 -cdrom $(BUILDDIR)/$(ISO)
 
-grubcfg: $(GRUB_CFG)
-	cp $(GRUB_CFG) $(ISODIR)/boot/grub/grub.cfg
-
 clean:
 	rm -Rf $(BUILDDIR)
 	cargo clean
-
-builddir: $(BUILDDIR)
 
 $(BUILDDIR):
 	mkdir build
