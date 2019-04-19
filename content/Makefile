@@ -32,7 +32,7 @@ GRUB_CFG	:= grub.cfg
 
 RUST_LIB	:= target/i686-unknown-linux-gnu/debug/libkfs.a
 
-.PHONE : all, iso, run, clean
+.PHONY : all, iso, run, clean
 
 all: $(BUILDDIR)/$(KERNEL)
 
