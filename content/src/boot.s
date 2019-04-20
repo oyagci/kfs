@@ -12,14 +12,28 @@ _header_end:
 
 global start
 extern kmain
-extern krust
 
 section .text
 bits 32
 
 start:
-	;mov dword [0xb8000], 0x2f4b2f4f
-	call krust
+	mov esp, _stack_top
+	call kmain
 _halt:
 	hlt
 	jp _halt
+
+global disable_cursor
+disable_cursor:
+	mov dx, 0x3D4
+	mov al, 0xA
+	out dx, al
+	inc dx
+	mov al, 0x20
+	out dx, al
+	ret
+
+section .bss
+_stack_bottom:
+	resb 0x2000
+_stack_top:
