@@ -7,12 +7,10 @@ extern "C" {
 }
 
 #[no_mangle]
-pub extern "C" fn kmain() {
+pub fn kmain() {
     unsafe { disable_cursor(); }
 
-    for i in 0..30 {
-        println!("KFS-{}", i);
-    }
+    println!("(KFS) Welcome.");
 }
 
 use core::panic::PanicInfo;
