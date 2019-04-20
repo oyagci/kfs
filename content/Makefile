@@ -8,7 +8,8 @@ SRC_ASM		:= $(addprefix src/,$(SRC_ASM_RAW))
 SRC_C		:=
 
 SRC_RS		:= \
-	src/lib.rs
+	src/lib.rs \
+	src/vga_buffer.rs
 SRCDIR		:= src
 
 BUILDDIR	:= build
