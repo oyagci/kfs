@@ -15,3 +15,7 @@
 [TLDP](https://www.tldp.org/LDP/tlk/tlk-toc.html)
 
 [Phil OPP](https://os.phil-opp.com/)
+
+[External Interrupts in the x86 system](https://habr.com/en/post/446312/)
+
+[RedoxOS](https://gitlab.redox-os.org/redox-os/redox)
