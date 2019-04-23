@@ -1,5 +1,5 @@
 {
-  "llvm-target": "i686-unkown-linux-gnu",
+  "llvm-target": "i686-unknown-linux-gnu",
   "data-layout": "e-m:e-i32:32:32-f32:32:32-S16-p:32:32:32",
   "arch": "x86",
   "target-endian": "little",
