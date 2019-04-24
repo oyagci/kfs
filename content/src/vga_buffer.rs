@@ -78,6 +78,7 @@ impl Writer {
                 _ => self.write_byte(0xfe),
             }
         }
+        Cursor::set_pos((self.row * 80 + self.col) as u16);
     }
 
     fn new_line(&mut self) {
@@ -117,6 +118,43 @@ impl fmt::Write for Writer {
     }
 }
 
+use crate::utils::outb;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Cursor(u16);
+
+impl Cursor {
+    pub fn inc(amount: u16) {
+
+        let pos = CURSOR.lock().0 + amount;
+        Cursor::set_pos(pos);
+    }
+
+    pub fn new_line() {
+        let mut pos = CURSOR.lock().0;
+
+        if pos % 80 == 0 {
+            pos += 80;
+        }
+        else {
+            while pos % 80 != 0 {
+                pos += 1;
+            }
+        }
+        Cursor::set_pos(pos);
+    }
+
+    fn set_pos(pos: u16) {
+
+        CURSOR.lock().0 = pos;
+
+        outb(0x3D4, 0x0F);
+        outb(0x3D5, (pos & 0xFF) as u8);
+        outb(0x3D4, 0x0E);
+        outb(0x3D5, (pos >> 8) as u8);
+    }
+}
+
 use lazy_static::lazy_static;
 use spin::Mutex;
 
@@ -127,6 +165,7 @@ lazy_static! {
         color: ColorCode::new(Color::White, Color::Black),
         buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
     });
+    pub static ref CURSOR: Mutex<Cursor> = Mutex::new(Cursor(0));
 }
 
 #[macro_export]
