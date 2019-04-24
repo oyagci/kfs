@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 pub fn outb(port: u16, val: u8) {
     unsafe {
         asm!("out dx, al" : : "{dx}"(port), "{al}"(val) : : "intel", "volatile");
