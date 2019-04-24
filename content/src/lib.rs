@@ -1,10 +1,11 @@
 #![no_std]
 #![feature(asm)]
 
-mod vga_buffer;
+mod keyboard_driver;
 mod utils;
+mod vga_buffer;
 
-use vga_buffer::{Color,set_global_color};
+use vga_buffer::{set_global_color, Color};
 
 fn print_kernel_logo() {
     set_global_color(Color::Green, Color::Black);
@@ -37,11 +38,14 @@ fn print_kernel_logo() {
 pub fn kmain() {
     utils::disable_cursor();
     utils::enable_cursor(14, 15);
+    let mut kb = keyboard_driver::Keyboard::new();
 
     print_kernel_logo();
 
-
     print!("#> ");
+    loop {
+        kb.update();
+    }
 }
 
 use core::panic::PanicInfo;
