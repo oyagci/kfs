@@ -7,6 +7,9 @@ mod utils;
 #[allow(unused_attributes)]
 #[no_mangle]
 pub fn kmain() {
+    utils::disable_cursor();
+    utils::enable_cursor(14, 15);
+
     println!("
   _  _______ ____
  | |/ /  ___/ ___|
