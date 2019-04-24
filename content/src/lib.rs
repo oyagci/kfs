@@ -4,6 +4,7 @@
 mod vga_buffer;
 mod utils;
 
+#[allow(unused_attributes)]
 #[no_mangle]
 pub fn kmain() {
     println!("
