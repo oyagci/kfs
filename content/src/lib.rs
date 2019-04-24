@@ -1,16 +1,28 @@
 #![no_std]
+#![feature(asm)]
 
 mod vga_buffer;
+mod utils;
 
-extern "C" {
-    fn disable_cursor();
+use utils::outb;
+
+fn disable_cursor() {
+    outb(0x3D4, 0x0A);
+    outb(0x3D5, 0x20);
 }
 
 #[no_mangle]
 pub fn kmain() {
-    unsafe { disable_cursor(); }
+    println!("
+  _  _______ ____
+ | |/ /  ___/ ___|
+ | ' /| |_  \\___ \\
+ | . \\|  _|  ___) |
+ |_|\\_\\_|   |____/
+");
+    println!(" (KFS) Kernel From Scratch\n");
 
-    println!("(KFS) Welcome.");
+    print!("#> ");
 }
 
 use core::panic::PanicInfo;
