@@ -36,7 +36,7 @@ impl ColorCode {
 #[repr(C)]
 struct ScreenChar {
     c: u8,
-    color: ColorCode
+    color: ColorCode,
 }
 
 const BUFFER_WIDTH: usize = 80;
@@ -57,7 +57,6 @@ pub struct Writer {
 }
 
 impl Writer {
-
     pub fn set_color(&mut self, fg: Color, bg: Color) {
         let new_color = ColorCode::new(fg, bg);
 
@@ -66,6 +65,13 @@ impl Writer {
 
     pub fn write_byte(&mut self, byte: u8) {
         match byte {
+            127 => {
+                self.col -= 1;
+                self.buffer.chars[self.row][self.col].write(ScreenChar {
+                    c: b' ',
+                    color: self.color,
+                });
+            }
             b'\n' => self.new_line(),
             byte => {
                 if self.col >= BUFFER_WIDTH {
@@ -73,7 +79,8 @@ impl Writer {
                 }
 
                 self.buffer.chars[self.row][self.col].write(ScreenChar {
-                    c: byte, color: self.color
+                    c: byte,
+                    color: self.color,
                 });
                 self.col += 1;
             }
@@ -83,7 +90,7 @@ impl Writer {
     pub fn write_string(&mut self, s: &str) {
         for b in s.bytes() {
             match b {
-                0x20...0x7e | b'\n' => self.write_byte(b),
+                0x20...0x7f | b'\n' => self.write_byte(b),
                 _ => self.write_byte(0xfe),
             }
         }
@@ -91,7 +98,7 @@ impl Writer {
     }
 
     fn new_line(&mut self) {
-        if self.row >= BUFFER_HEIGHT - 1{
+        if self.row >= BUFFER_HEIGHT - 1 {
             for row in 1..BUFFER_HEIGHT {
                 for col in 0..BUFFER_WIDTH {
                     let c = self.buffer.chars[row][col].read();
@@ -100,8 +107,7 @@ impl Writer {
             }
             self.clear_row(BUFFER_HEIGHT - 1);
             self.col = 0;
-        }
-        else {
+        } else {
             self.row += 1;
             self.col = 0;
         }
@@ -109,7 +115,8 @@ impl Writer {
 
     fn clear_row(&mut self, row: usize) {
         let blank = ScreenChar {
-            c: b' ', color: self.color
+            c: b' ',
+            color: self.color,
         };
 
         for col in 0..BUFFER_WIDTH {
@@ -138,7 +145,6 @@ pub struct Cursor(u16);
 
 impl Cursor {
     pub fn inc(amount: u16) {
-
         let pos = CURSOR.lock().0 + amount;
         Cursor::set_pos(pos);
     }
@@ -148,8 +154,7 @@ impl Cursor {
 
         if pos % 80 == 0 {
             pos += 80;
-        }
-        else {
+        } else {
             while pos % 80 != 0 {
                 pos += 1;
             }
@@ -158,7 +163,6 @@ impl Cursor {
     }
 
     fn set_pos(pos: u16) {
-
         CURSOR.lock().0 = pos;
 
         outb(0x3D4, 0x0F);
@@ -183,13 +187,13 @@ lazy_static! {
 
 #[macro_export]
 macro_rules! println {
-    () => (print!("\n"));
-    ($($arg:tt)*) => (print!("{}\n", format_args!($($arg)*)));
+	() => (print!("\n"));
+	($($arg:tt)*) => (print!("{}\n", format_args!($($arg)*)));
 }
 
 #[macro_export]
 macro_rules! print {
-    ($($arg:tt)*) => ($crate::vga_buffer::_print(format_args!($($arg)*)));
+	($($arg:tt)*) => ($crate::vga_buffer::_print(format_args!($($arg)*)));
 }
 
 #[doc(hidden)]
