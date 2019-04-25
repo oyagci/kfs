@@ -66,7 +66,13 @@ impl Writer {
     pub fn write_byte(&mut self, byte: u8) {
         match byte {
             127 => {
-                self.col -= 1;
+                if self.col > 0 {
+                    self.col -= 1;
+                }
+                else if self.row > 0 {
+                    self.row -= 1;
+                    self.col = BUFFER_WIDTH - 1;
+                }
                 self.buffer.chars[self.row][self.col].write(ScreenChar {
                     c: b' ',
                     color: self.color,
