@@ -57,6 +57,13 @@ pub struct Writer {
 }
 
 impl Writer {
+
+    pub fn set_color(&mut self, fg: Color, bg: Color) {
+        let new_color = ColorCode::new(fg, bg);
+
+        self.color = new_color;
+    }
+
     pub fn write_byte(&mut self, byte: u8) {
         match byte {
             b'\n' => self.new_line(),
@@ -109,6 +116,10 @@ impl Writer {
             self.buffer.chars[row][col].write(blank);
         }
     }
+}
+
+pub fn set_global_color(fg: Color, bg: Color) {
+    WRITER.lock().set_color(fg, bg);
 }
 
 use core::fmt;
