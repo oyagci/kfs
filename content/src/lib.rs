@@ -6,6 +6,7 @@ mod utils;
 mod vga_buffer;
 
 use vga_buffer::{set_global_color, Color};
+use keyboard_driver::Keyboard;
 
 fn print_kernel_logo() {
     set_global_color(Color::Green, Color::Black);
@@ -33,56 +34,19 @@ fn print_kernel_logo() {
     println!(" By nbouchin and oyagci\n");
 }
 
-fn kreadline(kb: &mut keyboard_driver::Keyboard, s: &str) -> [char; 512] {
-    let mut buffer: [char; 512] =  ['\0'; 512];
-    let mut pos: usize = 0;
-    let mut i: usize = 0;
-
-    print!("{}", s);
-    pos += s.len();
-
-    loop {
-        match kb.update() {
-            Some(s) => match s {
-                    b'\n' => {
-                        print!("{}", s as char);
-                        buffer[i] = '\n';
-                        i = 0;
-                        return buffer;
-                    },
-                    127 => if i > 0 {
-                        print!("{}", s as char);
-                        i -= 1;
-                    },
-                    _ => {
-                        print!("{}", s as char);
-                        buffer[i] = s as char;
-                        i += 1;
-                    }
-            },
-            None => {}
-        };
-    }
-}
-
 #[allow(unused_attributes)]
 #[no_mangle]
 pub fn kmain() {
     utils::disable_cursor();
     utils::enable_cursor(14, 15);
-    let mut kb = keyboard_driver::Keyboard::new();
-    let mut s: [char; 512];
+    let mut kb = Keyboard::new();
+    let mut s: utils::KReadlineOutput;
 
     print_kernel_logo();
 
     loop {
-        s = kreadline(&mut kb, "$> ");
-        for i in s.iter() {
-            if *i == 0 as char {
-                break;
-            }
-            print!("{}", i as &char);
-        }
+        s = utils::kreadline(&mut kb, "$> ");
+        s.dump();
     }
 
 }
