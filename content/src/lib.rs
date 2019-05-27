@@ -33,8 +33,8 @@ fn print_kernel_logo() {
     println!(" By nbouchin and oyagci\n");
 }
 
-fn kreadline(kb: &mut keyboard_driver::Keyboard, s: &str) -> &'static str {
-    let mut buffer: &'static str = "";
+fn kreadline(kb: &mut keyboard_driver::Keyboard, s: &str) -> [char; 512] {
+    let mut buffer: [char; 512] =  ['\0'; 512];
     let mut pos: usize = 0;
     let mut i: usize = 0;
 
@@ -46,6 +46,7 @@ fn kreadline(kb: &mut keyboard_driver::Keyboard, s: &str) -> &'static str {
             Some(s) => match s {
                     b'\n' => {
                         print!("{}", s as char);
+                        buffer[i] = '\n';
                         i = 0;
                         return buffer;
                     },
@@ -55,6 +56,7 @@ fn kreadline(kb: &mut keyboard_driver::Keyboard, s: &str) -> &'static str {
                     },
                     _ => {
                         print!("{}", s as char);
+                        buffer[i] = s as char;
                         i += 1;
                     }
             },
@@ -69,13 +71,18 @@ pub fn kmain() {
     utils::disable_cursor();
     utils::enable_cursor(14, 15);
     let mut kb = keyboard_driver::Keyboard::new();
-    let mut s: &'static str;
+    let mut s: [char; 512];
 
     print_kernel_logo();
 
     loop {
         s = kreadline(&mut kb, "$> ");
-        println!("{}", s);
+        for i in s.iter() {
+            if *i == 0 as char {
+                break;
+            }
+            print!("{}", i as &char);
+        }
     }
 
 }
