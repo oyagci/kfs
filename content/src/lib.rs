@@ -33,6 +33,18 @@ fn print_kernel_logo() {
     println!(" By nbouchin and oyagci\n");
 }
 
+fn kreadline(kb: &mut keyboard_driver::Keyboard, s: &str) {
+    let mut c: u8 = 0;
+    let mut pos: usize = 0;
+
+    print!("{}", s);
+    pos += s.len();
+
+    loop {
+        kb.update();
+    }
+}
+
 #[allow(unused_attributes)]
 #[no_mangle]
 pub fn kmain() {
@@ -42,10 +54,8 @@ pub fn kmain() {
 
     print_kernel_logo();
 
-    print!("#> ");
-    loop {
-        kb.update();
-    }
+    kreadline(&mut kb, "$> ");
+
 }
 
 use core::panic::PanicInfo;
