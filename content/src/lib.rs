@@ -44,7 +44,15 @@ fn kreadline(kb: &mut keyboard_driver::Keyboard, s: &str) -> &'static str {
     loop {
         match kb.update() {
             Some(s) => match s {
-                    b'\n' => { print!("{}", s as char); return buffer; },
+                    b'\n' => {
+                        print!("{}", s as char);
+                        i = 0;
+                        return buffer;
+                    },
+                    127 => if i > 0 {
+                        print!("{}", s as char);
+                        i -= 1;
+                    },
                     _ => {
                         print!("{}", s as char);
                         i += 1;
