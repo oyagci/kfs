@@ -35,5 +35,5 @@ disable_cursor:
 
 section .bss
 _stack_bottom:
-	resb 0x2000
+	resb 0x4000
 _stack_top:
