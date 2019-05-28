@@ -51,23 +51,34 @@ pub fn kreadline(kb: &mut Keyboard, s: &str) -> KReadlineOutput {
 
     loop {
         match kb.update() {
-            Some(s) => match s {
-                    b'\n' => {
-                        print!("{}", s as char);
-                        output.buffer[i] = '\n';
-                        return output;
-                    },
-                    127 => if i > 0 {
-                        print!("{}", s as char);
-                        i -= 1;
-                    },
-                    _ => {
-                        print!("{}", s as char);
-                        output.buffer[i] = s as char;
-                        i += 1;
+            Some(s) => match s.character {
+                b'\0' => {
+                },
+                b'\n' => {
+                    print!("{}", s.character as char);
+                    output.buffer[i] = '\n';
+                    return output;
+                },
+                127 => if i > 0 {
+                    print!("{}", s.character as char);
+                    i -= 1;
+                },
+                _ => {
+                    match s.state.lmeta {
+                        true => {
+                            if s.character as char == '1' {
+                                print!("GOTO TTY1");
+                            }
+                        },
+                        false => {
+                            print!("{}", s.character as char);
+                            output.buffer[i] = s.character as char;
+                            i += 1;
+                        }
                     }
+                }
             },
             None => {}
-        };
-    }
+        }
+    };
 }
