@@ -1,4 +1,5 @@
 use crate::print;
+use crate::println;
 use crate::utils;
 use spin::Mutex;
 
@@ -8,6 +9,12 @@ pub struct Keyboard {
     keymap: KeyMap,
 }
 
+pub struct KeyStrokes {
+    pub state: State,
+    pub character: u8,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct State {
     pub lshift: bool,
     pub rshift: bool,
@@ -47,10 +54,18 @@ impl Keyboard {
             self.state.lshift = false;
             return true;
         }
+        if val == 0x38 {
+            self.state.lmeta = true;
+            return true;
+        }
+        if val == 0xB8 {
+            self.state.lmeta = false;
+            return true;
+        }
         return false;
     }
 
-    pub fn update(&mut self) -> Option<u8> {
+    pub fn update(&mut self) -> Option<KeyStrokes> {
         utils::outb(1, 0x64);
         let index = utils::inb(0x60);
 
@@ -59,7 +74,7 @@ impl Keyboard {
         }
         if index < 0x5A && index != *LOCK.lock() {
             *LOCK.lock() = index;
-            return Some(self.get_char(index) as u8);
+            return Some(KeyStrokes{ state: self.state, character: self.get_char(index) as u8 });
         }
         *LOCK.lock() = index;
         return None;
@@ -83,20 +98,20 @@ impl KeyMap {
     pub fn new() -> KeyMap {
         KeyMap {
             key_array: [
-                ' ', ' ', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 127 as char, ' ',
-                'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n', ' ', 'a', 's',
-                'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`', ' ', '\\', 'z', 'x', 'c', 'v',
-                'b', 'n', 'm', ',', '.', '/', ' ', '*', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-                ' ', ' ', ' ', ' ', ' ', ' ', ' ', '7', '8', '9', '-', '4', '5', '6', '+', '1',
-                '2', '3', '0', '.', ' ', ' ', ' ', ' ', ' ', ' ',
+                '\0', '\0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 127 as char, '\0',
+                'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n', '\0', 'a', 's',
+                'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`', '\0', '\\', 'z', 'x', 'c', 'v',
+                'b', 'n', 'm', ',', '.', '/', '\0', '*', '\0', ' ', '\0', '\0', '\0', '\0', '\0', '\0',
+                '\0', '\0', '\0', '\0', '\0', '\0', '\0', '7', '8', '9', '-', '4', '5', '6', '+', '1',
+                '2', '3', '0', '.', '\0', '\0', '\0', '\0', '\0', '\0',
             ],
             shift_key_array: [
-                ' ', ' ', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', 127 as char, ' ',
-                'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '\n', ' ', 'A', 'S',
-                'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"', '~', ' ', '|', 'Z', 'X', 'C', 'V',
-                'B', 'N', 'M', '<', '>', '?', ' ', '*', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-                ' ', ' ', ' ', ' ', ' ', ' ', ' ', '7', '8', '9', '-', '4', '5', '6', '+', '1',
-                '2', '3', '0', '.', ' ', ' ', ' ', ' ', ' ', ' ',
+                '\0', '\0', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', 127 as char, '\0',
+                'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '\n', '\0', 'A', 'S',
+                'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"', '~', '\0', '|', 'Z', 'X', 'C', 'V',
+                'B', 'N', 'M', '<', '>', '?', '\0', '*', '\0', ' ', '\0', '\0', '\0', '\0', '\0', '\0',
+                '\0', '\0', '\0', '\0', '\0', '\0', '\0', '7', '8', '9', '-', '4', '5', '6', '+', '1',
+                '2', '3', '0', '.', '\0', '\0', '\0', '\0', '\0', '\0',
             ],
         }
     }
