@@ -1,5 +1,3 @@
-use crate::print;
-use crate::println;
 use crate::utils;
 use spin::Mutex;
 
