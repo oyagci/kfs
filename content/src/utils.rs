@@ -52,8 +52,7 @@ pub fn kreadline(kb: &mut Keyboard, s: &str) -> KReadlineOutput {
     loop {
         match kb.update() {
             Some(s) => match s.character {
-                b'\0' => {
-                },
+                b'\0' => {},
                 b'\n' => {
                     print!("{}", s.character as char);
                     output.buffer[i] = '\n';
@@ -71,6 +70,9 @@ pub fn kreadline(kb: &mut Keyboard, s: &str) -> KReadlineOutput {
                             }
                         },
                         false => {
+                            if i >= 512 - 1 {
+                                continue ;
+                            }
                             print!("{}", s.character as char);
                             output.buffer[i] = s.character as char;
                             i += 1;
