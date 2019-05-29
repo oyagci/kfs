@@ -68,8 +68,7 @@ impl Writer {
             127 => {
                 if self.col > 0 {
                     self.col -= 1;
-                }
-                else if self.row > 0 {
+                } else if self.row > 0 {
                     self.row -= 1;
                     self.col = BUFFER_WIDTH - 1;
                 }
