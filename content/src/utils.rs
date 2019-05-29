@@ -66,6 +66,7 @@ pub fn kreadline(kb: &mut Keyboard, s: &str) -> KReadlineOutput {
                     if i > 0 {
                         print!("{}", s.character as char);
                         i -= 1;
+                        output.buffer[i] = '\0';
                     }
                 }
                 _ => match s.state.lmeta {
