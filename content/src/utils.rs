@@ -67,7 +67,7 @@ pub fn kreadline(kb: &mut Keyboard, s: &str) -> KReadlineOutput {
                     match s.state.lmeta {
                         true => {
                             if s.character as char == '1' {
-                                print!("GOTO TTY1");
+                                print!("prout");
                             }
                         },
                         false => {
