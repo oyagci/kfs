@@ -55,13 +55,13 @@ $(RUST_LIB): $(SRC_RS)
 iso: $(BUILDDIR)/$(ISO)
 
 $(BUILDDIR)/$(ISO): $(BUILDDIR)/$(KERNEL)
-	mkdir -p $(BUILDDIR)/$(ISODIR)/boot/grub
-	cp $(GRUB_CFG) $(BUILDDIR)/$(ISODIR)/boot/grub/grub.cfg
-	cp $(BUILDDIR)/$(KERNEL) $(BUILDDIR)/$(ISODIR)/boot/kernel.bin
-	grub-mkrescue -o $(BUILDDIR)/$(ISO) $(BUILDDIR)/$(ISODIR)
+#	mkdir -p $(BUILDDIR)/$(ISODIR)/boot/grub
+#	cp $(GRUB_CFG) $(BUILDDIR)/$(ISODIR)/boot/grub/grub.cfg
+#	cp $(BUILDDIR)/$(KERNEL) $(BUILDDIR)/$(ISODIR)/boot/kernel.bin
+#	grub-mkrescue -o $(BUILDDIR)/$(ISO) $(BUILDDIR)/$(ISODIR)
 
 run: iso
-	qemu-system-i386 -cdrom $(BUILDDIR)/$(ISO)
+	qemu-system-i386 -kernel $(BUILDDIR)/kernel-x86.bin
 
 clean:
 	rm -Rf $(BUILDDIR)
