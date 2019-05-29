@@ -10,7 +10,8 @@ SRC_C		:=
 SRC_RS		:= \
 	src/lib.rs \
 	src/vga_buffer.rs \
-	src/keyboard_driver.rs
+	src/keyboard_driver.rs \
+	src/utils.rs
 
 SRCDIR		:= src
 
