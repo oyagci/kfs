@@ -5,8 +5,8 @@ mod keyboard_driver;
 mod utils;
 mod vga_buffer;
 
-use vga_buffer::{set_global_color, Color};
 use keyboard_driver::Keyboard;
+use vga_buffer::{set_global_color, Color};
 
 fn print_kernel_logo() {
     set_global_color(Color::Green, Color::Black);
@@ -48,7 +48,6 @@ pub fn kmain() {
         s = utils::kreadline(&mut kb, "$> ");
         s.dump();
     }
-
 }
 
 use core::panic::PanicInfo;
