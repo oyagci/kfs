@@ -9,14 +9,16 @@
 ;	dw 0
 ;	dd 8
 ;_header_end:
+section .multiboot
+   align 4
+   dd 0x1BADB002
+   dd 0x0
+   dd -0x1BADB002
+
 global start
 extern kmain
 
 section .text
-   align 4
-        dd 0x1BADB002
-        dd 0x0
-        dd -0x1BADB002
 bits 32
 
 start:
