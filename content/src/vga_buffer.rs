@@ -130,6 +130,14 @@ impl Writer {
     }
 }
 
+pub fn clear_screen() {
+    let mut writer = WRITER.lock();
+
+    for row in 0..25 {
+        writer.clear_row(row);
+    }
+}
+
 pub fn set_global_color(fg: Color, bg: Color) {
     WRITER.lock().set_color(fg, bg);
 }
