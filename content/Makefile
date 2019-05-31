@@ -49,7 +49,7 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.s
 $(RUST_LIB): $(SRC_RS)
 	cargo xbuild --target i686-unknown-linux-gnu.json
 
-run:
+run: all
 	qemu-system-i386 -kernel $(BUILDDIR)/kernel-x86.bin
 
 clean:
