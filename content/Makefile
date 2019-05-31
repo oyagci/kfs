@@ -1,7 +1,6 @@
 ARCH		:= x86
 KERNEL		:= kernel-$(ARCH).bin
-LINKER_FILE	:= x86.ld
-
+LINKER_FILE	:= x86.ld 
 SRC_ASM_RAW	:= boot.s
 SRC_ASM		:= $(addprefix src/,$(SRC_ASM_RAW))
 
@@ -30,13 +29,11 @@ ASFLAGS		:= -f elf32
 LD			:= ld
 LDFLAGS		:= -melf_i386 -n
 
-ISO			:= os.iso
-ISODIR		:= isofiles
 GRUB_CFG	:= grub.cfg
 
 RUST_LIB	:= target/i686-unknown-linux-gnu/debug/libkfs.a
 
-.PHONY : all, iso, run, clean
+.PHONY : all, run, clean
 
 all: $(BUILDDIR)/$(KERNEL)
 
@@ -52,15 +49,7 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.s
 $(RUST_LIB): $(SRC_RS)
 	cargo xbuild --target i686-unknown-linux-gnu.json
 
-iso: $(BUILDDIR)/$(ISO)
-
-$(BUILDDIR)/$(ISO): $(BUILDDIR)/$(KERNEL)
-#	mkdir -p $(BUILDDIR)/$(ISODIR)/boot/grub
-#	cp $(GRUB_CFG) $(BUILDDIR)/$(ISODIR)/boot/grub/grub.cfg
-#	cp $(BUILDDIR)/$(KERNEL) $(BUILDDIR)/$(ISODIR)/boot/kernel.bin
-#	grub-mkrescue -o $(BUILDDIR)/$(ISO) $(BUILDDIR)/$(ISODIR)
-
-run: iso
+run:
 	qemu-system-i386 -kernel $(BUILDDIR)/kernel-x86.bin
 
 clean:
