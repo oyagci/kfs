@@ -37,6 +37,7 @@ fn print_kernel_logo() {
 #[allow(unused_attributes)]
 #[no_mangle]
 pub fn kmain() {
+    vga_buffer::clear_screen();
     utils::disable_cursor();
     utils::enable_cursor(14, 15);
     let mut kb = Keyboard::new();
