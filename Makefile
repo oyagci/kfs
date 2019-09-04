@@ -34,7 +34,7 @@ ISO			:= os.iso
 ISODIR		:= isofiles
 GRUB_CFG	:= grub.cfg
 
-RUST_LIB	:= target/i686-unknown-linux-gnu/release/libkfs.a
+RUST_LIB	:= target/i386-unknown-linux-gnu/release/libkfs.a
 
 .PHONY : all, iso, run, clean
 
@@ -50,7 +50,7 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.s
 	$(AS) $(ASFLAGS) $< -o $@
 
 $(RUST_LIB): $(SRC_RS)
-	cargo xbuild --release --target i686-unknown-linux-gnu.json
+	cargo xbuild --release --target i386-unknown-linux-gnu.json
 
 iso: $(BUILDDIR)/$(ISO)
 

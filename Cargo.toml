@@ -4,6 +4,9 @@ version = "0.1.0"
 authors = ["Oguzhan YAGCI <oyagci@student.42.fr>"]
 edition = "2018"
 
+[package.metadata.xbuild]
+memcpy = true
+
 [lib]
 crate-type = ["staticlib"]
 
