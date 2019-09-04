@@ -95,7 +95,7 @@ impl Writer {
     pub fn write_string(&mut self, s: &str) {
         for b in s.bytes() {
             match b {
-                0x20...0x7f | b'\n' => self.write_byte(b),
+                0x20..=0x7f | b'\n' => self.write_byte(b),
                 _ => self.write_byte(0xfe),
             }
         }
