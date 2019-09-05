@@ -1,5 +1,6 @@
 #![no_std]
 #![feature(asm)]
+#![no_main]
 
 mod keyboard_driver;
 mod utils;
@@ -7,6 +8,20 @@ mod vga_buffer;
 
 use keyboard_driver::Keyboard;
 use vga_buffer::{set_global_color, Color};
+
+pub struct MultibootHeader {
+    magic: u32,
+    arch: u32,
+    magic2: u32
+}
+
+#[link_section = ".multiboot"]
+#[used]
+pub static MULTIBOOT_HDR: MultibootHeader = MultibootHeader {
+    magic: 0x1BADB002,
+    arch: 0x0,
+    magic2: -(0x1BADB002 as i32) as u32
+};
 
 fn print_kernel_logo() {
     set_global_color(Color::Green, Color::Black);
@@ -56,5 +71,17 @@ use core::panic::PanicInfo;
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     println!("{}", info);
+    loop {}
+}
+
+#[no_mangle]
+pub fn start() -> ! {
+    unsafe {
+        asm!("
+            mov esp, 0
+            add esp, 0x20000
+            " : : : : "intel");
+    }
+    kmain();
     loop {}
 }
