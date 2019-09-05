@@ -9,6 +9,7 @@ mod vga_buffer;
 use keyboard_driver::Keyboard;
 use vga_buffer::{set_global_color, Color};
 
+#[allow(unused)]
 pub struct MultibootHeader {
     magic: u32,
     arch: u32,
