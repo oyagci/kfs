@@ -3,4 +3,5 @@ cargo xbuild --release --target i386-unknown-none.json && \
 	cp grub.cfg build/isodir/boot/grub/grub.cfg && \
 	cp target/i386-unknown-none/release/kfs build/isodir/boot/kernel.bin && \
 	grub-mkrescue -o kernel.iso build/isodir && \
+	rm -Rf build/ &&
 	qemu-system-i386 -cdrom kernel.iso
