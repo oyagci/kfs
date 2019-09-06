@@ -5,6 +5,7 @@
 mod keyboard_driver;
 mod utils;
 mod vga_buffer;
+mod gdt;
 
 use keyboard_driver::Keyboard;
 use vga_buffer::{set_global_color, Color};
@@ -83,6 +84,9 @@ pub fn start() -> ! {
             add esp, 0x20000
             " : : : : "intel");
     }
+
+    gdt::load();
+
     kmain();
     loop {}
 }
