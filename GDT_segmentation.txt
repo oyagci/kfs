@@ -1,0 +1,87 @@
++--------------------------------------------------+
+|  Physical addresses in Real-Mode (16 bit)		   |
++--------------------------------------------------+
+
+A:B
+
+address calculation:
+	(A * 0x10) + B
+
+A: 16 bit address of the segment (segments are limited to 64K)
+B: Offset in the segment
+
+
+ex: 
+for 0x1000 segment :
+	Base address	= 0x1000 * 0x10 = 0x10000
+	Addresses Range	= 0x10000 -> 0x1FFFF
+
+	Segments can overlap
+
++--------------------------------------------------+
+|  Physical addresses in Protected-Mode (32 bit)   |
++--------------------------------------------------+
+
+A:B
+
+address calculation : A -> Index in GDT -> Segment Base + B
+A: (selector) 32 bit value used to access GDT or LDT (segments are limited to 4GiB)
+B: Offset
+
+ex: 
+	mov [rSI], AX : write the word contained in AX at the address DS:rSI
+
+
+CS: [(.....)(.)(..)]
+	 ^		^  ^
+	 1		2  3
+
+1: Descriptor Table Entry
+2: Descriptor Type (1 = LDT, 0 = GDT)
+3: Ring level (must corespond to the descriptor table entry's DPL, if not, GPF occurs)
+
+LGDT: Load GDT instruction, load global descriptor table into memory
+LLDT: Load LDT instruction, load local descriptor table into memory
+
++------------------------------------------------+
+| Legend										 |
++------------------------------------------------+
+| r	: design a register							 |
+| . : 1 byte								 	 |
+| (): Separator								 	 |
+| []: Selector								 	 |
+| LDT: Local Descriptor Table				 	 |
+| GDT: Global Descriptor Table				 	 |
+| DPL: Descriptor Privilege Level			 	 |
+| GPF: General Protection Fault				 	 |
++------------------------------------------------+
+
++------------------------------------------------+
+| Segment Registers								 |
++------------------------------------------------+
+|  CS: Code Segment	 						 	 |
+|  DS: Data Segment							 	 |
+|  SS: Stack Segment						 	 |
+|  ES: Extra Segment						 	 |
+|  GS: ---+									 	 |
+|  FS: ---|									 	 |
+|  		General Purpose Segment				 	 |
++------------------------------------------------+
+
+
++------------------------------------------------+
+| Global Descriptor Table						 |
++------------------------------------------------+
+
++------------------------------------------------------------------------------------------------------------+
+| - The base address of the segment																			 |
+| - The default operation size in the segment (16-bit/32-bit)												 |
+| - The privilege level of the descriptor (Ring 0 -> Ring 3)												 |
+| - The granularity (Segment limit is in byte/4kb units)													 |
+| - The segment limit (The maximum legal offset within the segment)											 |
+| - The segment presence (Is it present or not)																 |
+| - The descriptor type (0 = system; 1 = code/data)															 |
+| - The segment type (Code/Data/Read/Write/Accessed/Conforming/Non-Conforming/Expand-Up/Expand-Down) 		 |
++------------------------------------------------------------------------------------------------------------+
+
+If descriptor type is clear it describe a TSS or LDT

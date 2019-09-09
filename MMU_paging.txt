@@ -1,0 +1,151 @@
++--------------------------------------------------+
+|	MMU											   |
++--------------------------------------------------+
+
+MMU maps memory through two tables: PD & PT
+
+PD: Paging Directory
+PT: Paging Table
+
+CRx: registers that contains the physical address of the page directory
+
++--------------------------------------------------+
+|	PDE											   |
++--------------------------------------------------+
+
+												   
++--------------------------------------------------+
+|						|		|				   |
++--------------------------------------------------+
+^						^		^				   ^
+31						11		9				   0
+
+31:11 ->
+Page Table 4-KiB aligned address
+
+11:9 ->
+Unused by processor
+
+9:0 ->
+	G ->
+		Ignored
+	S ->
+		Page Size, stores the page size for this entry.
+		1: 4MiB (bit 21:12 reserved)
+		0: 4KiB
+	
+	0 ->
+	A ->
+		Accessed (read or written to)
+		1: Accessed
+		0: Not Accessed
+	D ->
+		Cache Disabled
+		1: Do not cache
+		0: Cache
+	W ->
+		Write Through
+		1: Write Through Caching enabled
+		0: Write Back Caching enabled
+	U ->
+		User/Supervisor (for all pages)
+		1: Accessed by all
+		0: Accessed by supervisor
+	R ->
+		Read/Write
+		1: read/write
+		0: read-only
+		if wp bit in CR0 register is set, only applied to userland
+	P ->
+		Present
+		1: Physical memory at moment
+		0: Not physical memory (if called when 0, page fault occur)
+
+
++--------------------------------------------------+
+|	PTE											   |
++--------------------------------------------------+
+
++--------------------------------------------------+
+|						|		|				   |
++--------------------------------------------------+
+^						^		^				   ^
+31						11		9				   0
+
+31:11 ->
+	Physical memory addresses (4-KiB aligned)
+9:0 ->
+	C ->
+		Cached
+	G ->
+		Global Flag
+		1: prevents the TLB from updating the addresses in it cache if CR3 register is reset (page global bit in CR4 must be set)
+		0: Nothing
+	D ->
+		Dirty Flag
+		1: Page has been written to
+		0: Not written
+	0 ->
+		1: PAT is supported
+		0: Not supported
+
++--------------------------------------------------+
+| Virtual Address Spaces						   |
++--------------------------------------------------+
+
+Each process may execute it own 4GiB area of memory
+
++--------------------------------------------------+
+| Virtual Memory								   |
++--------------------------------------------------+
+
+Os can swap entire pages not in use to the hard drive until they are called
+
++---------------------------------------------------+
+| void *get_phys(void *vaddr)						|
++---------------------------------------------------+
+|	PDindex = vaddr >> 22							|																			
+|	PTindex = vaddr >> 12 & 0x03FF					|
+|													|
+|	PD = 0xFFFFF000									|
+|	PT = 0xFFC00000 + (0x400 * PDindex)				|
+|													|	
+|	return (PT[ptindex] & ~0xFFF) + (vaddr & 0xFFF)	|
++---------------------------------------------------+
+
++---------------------------------------------------+
+| void mpage(void *paddr, void *vaddr, uint flags)	|
++---------------------------------------------------+
+|	PDindex: vaddr >> 22							|
+|	PTindex: vaddr >> 12 & 0x03FF					|
+|													|
+|	PD = 0xFFFFF000									|
+|	PT = 0xFFC00000 + 0x400 * PDindex				|
+|													|
+|	PT[PTindex] = paddr | (flags & 0xFFF) | 0x01	|
++---------------------------------------------------+
+
+PAGING MODE:
+non-PAE: memory waste ratio : 1/1024(0.1%)
+https://wiki.osdev.org/Page_Tables
+https://samypesse.gitbook.io/how-to-create-an-operating-system/chapter9
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------+
+|	Level	|	Table	|	Size			|			Range		|	Bits	|	Entries |	Pages					|	Recursive mapping				|
++-----------------------------------------------------------------------------------------------------------------------------------------------------------+	
+|	0		|	(page)	|	-				|	0x1000		 (4 KiB)| 	12 bits |	-		|	0x1			(1)			|	-								| 
+|	1 		|	PT		|	0x1000 	(4 KiB) |	0x40 0000 	 (4 MiB)| 	10 bits |	1024	| 	0x400		(1024)		|	0xFFC0 0000 + 0x1000 * PDi		|
+|	2 		|	PD 		|	0x1000 	(4 KiB) |	0x10000 0000 (4 GiB)| 	10 bits |	1024	| 	0x10 0000	(1048576)	|	0xFFFF F000						|
++-----------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+Linear address:
+31               21                11				0
++---------------------------------------------------+
+|													|
++---------------------------------------------------+
+
+31:21	-> offset to entry in PD (0:1023)
+21:11	-> offset to entry in PT (0:1023)
+11:0	-> position in the page (0:4095)
+
+0:0x40 000 000 -> kernel space
