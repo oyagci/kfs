@@ -6,6 +6,7 @@ mod keyboard_driver;
 mod utils;
 mod vga_buffer;
 mod gdt;
+mod mmu;
 
 use keyboard_driver::Keyboard;
 use vga_buffer::{set_global_color, Color};
@@ -86,7 +87,19 @@ pub fn start() -> ! {
     }
 
     gdt::load();
+    let mut frame = mmu::FrameAllocator::new();
+    let mut page_list: [*mut u8; 5] = [0 as *mut u8; 5];
 
-    kmain();
+    for i in 0..5 {
+        page_list[i] = frame.alloc().unwrap();
+        if i == 3 {
+            frame.free(page_list[1]);
+        }
+    }
+    for &page in page_list.iter() {
+        println!("{:p}", page);
+    }
+
+//    kmain();
     loop {}
 }
